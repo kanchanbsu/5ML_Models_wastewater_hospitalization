@@ -140,35 +140,47 @@ plt.savefig("All_Models_Test_Predictions.png", dpi=600)
 plt.show()
 
 # SVR: Observed vs Predicted Hospitalizations
+import numpy as np
 import matplotlib.pyplot as plt
+
+# Convert to arrays
+y_true = np.array(y_test)
+y_pred = np.array(pred_svr)
+
+# Error (distance from perfect prediction)
+errors = np.abs(y_true - y_pred)
 
 plt.figure(figsize=(6,6))
 
-# SVR predictions
-plt.scatter(
-    y_test,
-    pred_svr,
-    alpha=0.7
+# Scatter colored by error
+scatter = plt.scatter(
+    y_true,
+    y_pred,
+    c=errors,
+    cmap="viridis",
+    alpha=0.8,
+    edgecolor="k"
 )
 
-# 45-degree reference line (perfect prediction)
+# Perfect prediction line
 plt.plot(
-    [y_test.min(), y_test.max()],
-    [y_test.min(), y_test.max()],
-    'k--',
-    linewidth=2
+    [y_true.min(), y_true.max()],
+    [y_true.min(), y_true.max()],
+    "r--",
+    linewidth=2,
+    label="Perfect Prediction"
 )
 
-plt.xlabel("Observed Hospitalizations")
-plt.ylabel("Predicted Hospitalizations (SVR)")
-plt.title("SVR Model: Observed vs Predicted")
+plt.colorbar(scatter, label="Absolute Error")
 
+plt.xlabel("Observed Values")
+plt.ylabel("SVR Predicted Values")
+plt.title("SVR: Observed vs Predicted (Color = Error Magnitude)")
+
+plt.legend()
 plt.tight_layout()
 
-plt.savefig(
-    "SVR_Observed_vs_Predicted.png",
-    dpi=600
-)
-
+plt.savefig("SVR_colored_scatter.png", dpi=600)
 plt.show()
+
 
